@@ -17,6 +17,8 @@
  Get-Process -Name '*chrome*' | Export-MiniDump -Out '/';
 .Example
 Export-MiniDump -Process (Get-Process -ProcessId 1234) -OutputPath '~/Desktop';
+.Example
+Export-MiniDump -Process (Get-Process -Process 1234) -OutputPath '~/Downloads' -Terminate;
 .Link
  https://docs.blackbaud.com
 #>
@@ -37,7 +39,7 @@ function Export-MiniDump {
         [switch] $Terminate
     );
     begin {
-        [string] $logFile = "$([System.IO.Path]::GetTempPath())/Export-MiniDump-$((Get-Date -Format 'o') -replace ':', '.').log";
+        [string] $logFile = "$([System.IO.Path]::GetTempPath().Replace('\', '/'))\Export-MiniDump-$((Get-Date -Format 'o') -replace ':', '.').log";
         Start-Transcript -Path $logFile -IncludeInvocationHeader | Out-Null;
         Write-Information -MessageData "Validating output path: $($OutputPath)...." -Tags @('Information');
         if (!(Test-Path -Path $OutputPath)) {
